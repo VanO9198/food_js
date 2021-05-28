@@ -92,4 +92,81 @@ window.addEventListener('DOMContentLoaded', function() {
 
     setTimer('.timer', deadline);
 
+    const btnsModal = document.querySelectorAll('[data-modal]'),
+        modalWindow = document.querySelector('.modal'),
+        modalClose = document.querySelector('[data-close]');
+        
+    
+
+    const openModal = () => {
+        modalWindow.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        clearTimeout(modalTimer);
+    };
+
+    for (let button of btnsModal) {
+        button.addEventListener('click', openModal);
+               
+    }
+        
+
+    const closeModal = () => {
+        modalWindow.style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
+    modalClose.addEventListener('click', closeModal);
+
+    modalWindow.addEventListener('click', (e) => {
+        if (e.target === modalWindow) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === "Escape" && modalWindow.style.display === 'block') {
+            closeModal();
+        }
+    });
+
+    let modalTimer = setTimeout(openModal, 5000);
+    
+
+    const contactFromModal = {
+        name: [],
+        phone: []
+    };
+
+    const addCallRequest = () => {
+        const addForm = document.querySelector('form.modal__form'),
+            inputName = addForm.querySelector('[name="name"]'),
+            inputPhone = addForm.querySelector('[name="phone"]');
+        
+        addForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            let nameCont = inputName.value,
+                phoneCont = inputPhone.value;
+            
+            if (nameCont && phoneCont) {
+                contactFromModal.name.push(nameCont);
+                contactFromModal.phone.push(phoneCont);
+                closeModal();
+            }
+
+        console.log(contactFromModal);
+
+        });
+        
+    };
+
+    addCallRequest();
+
+    
+
+    
+    
+    
 });
+
+
