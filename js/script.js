@@ -9,7 +9,9 @@ window.addEventListener('DOMContentLoaded', function() {
 	function hideTabContent() {
         
         tabsContent.forEach(item => {
-            item.style.display ='none';
+            item.classList.add('hide');
+            item.classList.remove('show');
+
         });
 
         tabs.forEach(item => {
@@ -18,7 +20,8 @@ window.addEventListener('DOMContentLoaded', function() {
 	}
 
 	function showTabContent(i = 0) {
-        tabsContent[i].style.display ='block';
+        tabsContent[i].classList.add('show');
+        tabsContent[i].classList.remove('hide');
         tabs[i].classList.add('tabheader__item_active');
     }
     
@@ -129,7 +132,7 @@ window.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    let modalTimer = setTimeout(openModal, 5000);
+    let modalTimer = setTimeout(openModal, 500000);
     
 
     const contactFromModal = {
@@ -154,7 +157,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 closeModal();
             }
 
-        console.log(contactFromModal);
+        alert(`${contactFromModal.name[0]}, мы с Вами свяжемся.`);
 
         });
         
@@ -164,9 +167,141 @@ window.addEventListener('DOMContentLoaded', function() {
 
     
 
+    //calculator
+
+    const genderChoice = document.querySelector('#gender'),
+          gender = genderChoice.querySelectorAll('.calculating__choose-item'),
+          activityChoice = document.querySelector('.calculating__choose_big'),
+          activity = activityChoice.querySelectorAll('.calculating__choose-item'),
+          calcResult = document.querySelector('.calculating__result span'),
+          calculateInfo = {
+              gender: 0,
+              height: 0,
+              heightRatio: 0,
+              weight: 0,
+              weightRatio: 0,
+              age: 0,
+              ageRatio: 0,
+              activityClass: 0
+          };
     
+   
+    function deactivate(type) {
+        type.forEach((item) => {
+            item.classList.remove('calculating__choose-item_active');            
+        });
+    }
+
+    function activateActivity(i = 0) {
+        activity[i].classList.add('calculating__choose-item_active');
+    }
+
+
+    function activate(type, i = 0) {
+        type[i].classList.add('calculating__choose-item_active');        
+    }
+
+    deactivate(gender);
+    deactivate(activity);
+    activate(gender);
+    activate(activity);
+
+    gender.forEach((item, i) => {
+        item.addEventListener('click', (event)  => {
+            const target = event.target;
+            if (event && target.classList.contains('calculating__choose-item')) {
+                deactivate(gender);
+                activate(gender, i);
+                
+                switch(target.textContent) {
+                    case 'Женщина': 
+                        calculateInfo.gender = 655.1;
+                        calculateInfo.heightRatio = 1.85;
+                        calculateInfo.weightRatio = 9.563;
+                        calculateInfo.ageRatio = 4.676;
+
+                        break;
+                    case 'Мужчина': 
+                        calculateInfo.gender = 66.5;
+                        calculateInfo.heightRatio = 5.003;
+                        calculateInfo.weightRatio = 13.75;
+                        calculateInfo.ageRatio = 6.775;
+
+                        break;                    
+                }
+                calcCalories();
+                calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;            
+            }
+        });
+    });
+
+    activity.forEach((item, i) => {
+        item.addEventListener('click', (event)  => {
+            const target = event.target;
+            if (event && target.classList.contains('calculating__choose-item')) {
+                deactivate(activity);
+                activate(activity, i);
+
+                switch(target.textContent) {
+                    case 'Низкая активность': 
+                        calculateInfo.activityClass = 1.2;
+                        break;
+                    case 'Невысокая активность': 
+                        calculateInfo.activityClass = 1.375;
+                        break;
+                    case 'Умеренная активность': 
+                        calculateInfo.activityClass = 1.55;
+                        break;
+                    case 'Высокая активность': 
+                        calculateInfo.activityClass = 1.7;
+                        break; 
+                }
+                calcCalories();
+                calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;
+            }
+        });
+    });
+
+    const paramsBlock = document.querySelector('.calculating__choose_medium'),
+        paramHeight = paramsBlock.querySelector('#height'),
+        paramWeight = paramsBlock.querySelector('#weight'),
+        paramAge = paramsBlock.querySelector('#age');
     
+    paramWeight.addEventListener('change', (event) => {
+        const target = event.target;
+        calculateInfo.weight = target.value;
+        calcCalories();
+        calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;
+    });  
+    
+    paramHeight.addEventListener('change', (event) => {
+        const target = event.target;
+        calculateInfo.height = target.value;
+        calcCalories();
+        calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;
+    });
+
+    paramAge.addEventListener('change', (event) => {
+        const target = event.target;
+        calculateInfo.age = target.value;
+        calcCalories();
+        calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;
+    });
+
+    let caloriesTotal = 0;
+
+    function calcCalories() {
+        let a = calculateInfo.weight,
+            b = calculateInfo.height,
+            c = calculateInfo.age,
+            d = calculateInfo.activityClass,
+            e = calculateInfo.gender,
+            f = calculateInfo.heightRatio,
+            g = calculateInfo.weightRatio,
+            h = calculateInfo.ageRatio;
+
+            caloriesTotal = Math.floor((e + (g * a) + (f * b) - (h * c))*d);
+    }
     
 });
-
 
