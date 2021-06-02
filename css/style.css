@@ -344,7 +344,15 @@ a {
 
 .offer__slide {
     width: 100%;
-    height: 390px
+    height: 390px    
+}
+
+.offer__slide.hide {
+    display: none
+}
+
+.offer__slide.show {
+    display: block
 }
 
 .offer__slide img {

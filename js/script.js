@@ -192,19 +192,14 @@ window.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function activateActivity(i = 0) {
-        activity[i].classList.add('calculating__choose-item_active');
-    }
-
-
     function activate(type, i = 0) {
         type[i].classList.add('calculating__choose-item_active');        
     }
 
     deactivate(gender);
     deactivate(activity);
-    activate(gender);
-    activate(activity);
+    // activate(gender);
+    // activate(activity);
 
     gender.forEach((item, i) => {
         item.addEventListener('click', (event)  => {
@@ -219,14 +214,13 @@ window.addEventListener('DOMContentLoaded', function() {
                         calculateInfo.heightRatio = 1.85;
                         calculateInfo.weightRatio = 9.563;
                         calculateInfo.ageRatio = 4.676;
-
                         break;
+                        
                     case 'Мужчина': 
                         calculateInfo.gender = 66.5;
                         calculateInfo.heightRatio = 5.003;
                         calculateInfo.weightRatio = 13.75;
                         calculateInfo.ageRatio = 6.775;
-
                         break;                    
                 }
                 calcCalories();
@@ -302,6 +296,87 @@ window.addEventListener('DOMContentLoaded', function() {
 
             caloriesTotal = Math.floor((e + (g * a) + (f * b) - (h * c))*d);
     }
-    
+    //offer slider 104
+
+    let prevSlideCount = document.querySelector('.offer__slider-prev'),
+        nextSlideCount = document.querySelector('.offer__slider-next'),
+        currentSlideCount = document.querySelector('#current'),
+        totalSlideCount = document.querySelector('#total'),
+        slideWrapper = document.querySelector('.offer__slider-wrapper'),
+        offerSlide = slideWrapper.querySelectorAll('.offer__slide');
+
+    function hideOfferSlide() {
+        offerSlide.forEach((item) => {
+            item.classList.add('hide');
+            item.classList.remove('show');
+        });
+    }
+    hideOfferSlide();
+
+    function showOfferSlide(i = 2) {            
+            offerSlide[i].classList.add('show');
+            offerSlide[i].classList.remove('hide');           
+    }
+    showOfferSlide();
+
+    prevSlideCount.addEventListener('click', () => {
+        let index = +currentSlideCount.textContent;            
+        if (index >= 2) {                
+                hideOfferSlide();
+                showOfferSlide(+currentSlideCount.textContent-2);
+                currentSlideCount.innerHTML = `<span id="current">0${index-1}</span>`;                
+        } else {                
+                hideOfferSlide();
+                showOfferSlide(+totalSlideCount.textContent-1);
+                currentSlideCount.innerHTML = 
+                    `<span id="current">0${+totalSlideCount.textContent}</span>`;              
+        }
+        
+    });
+
+    nextSlideCount.addEventListener('click', () => {
+        let index = +currentSlideCount.textContent;            
+        if (index <= +totalSlideCount.textContent-1) {                
+                hideOfferSlide();
+                showOfferSlide(+currentSlideCount.textContent);
+                currentSlideCount.innerHTML = `<span id="current">0${index+1}</span>`;                
+        } else {                
+                hideOfferSlide();
+                showOfferSlide(+totalSlideCount.textContent-4);
+                currentSlideCount.innerHTML = 
+                    `<span id="current">0${+totalSlideCount.textContent-3}</span>`;              
+        }
+        
+    });
+
+    // call request from page 223
+
+
+    const addOrderRequest = () => {
+        const callRequest = document.querySelector('.order'),
+        nameFromForm = callRequest.querySelector('[name="name"]'),
+        phoneFromForm = callRequest.querySelector('[name="phone"]'),
+        orderForm = callRequest.querySelector('.order__form');
+        
+        orderForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            let nameCont = nameFromForm.value,
+                phoneCont = phoneFromForm.value;
+            
+            if (nameCont && phoneCont) {
+                contactFromModal.name.push(nameCont);
+                contactFromModal.phone.push(phoneCont);                
+            }
+
+            alert(`${contactFromModal.name[0]}, мы с Вами свяжемся.`);
+            
+
+        });
+        
+    };
+
+    addOrderRequest();
+
 });
 
