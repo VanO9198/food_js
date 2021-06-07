@@ -1,13 +1,15 @@
-window.addEventListener('DOMContentLoaded', function() {
+'use strict';
+
+window.addEventListener('DOMContentLoaded', function () {
 
     // Tabs
-    
-	let tabs = document.querySelectorAll('.tabheader__item'),
-		tabsContent = document.querySelectorAll('.tabcontent'),
-		tabsParent = document.querySelector('.tabheader__items');
 
-	function hideTabContent() {
-        
+    let tabs = document.querySelectorAll('.tabheader__item'),
+        tabsContent = document.querySelectorAll('.tabcontent'),
+        tabsParent = document.querySelector('.tabheader__items');
+
+    function hideTabContent() {
+
         tabsContent.forEach(item => {
             item.classList.add('hide');
             item.classList.remove('show');
@@ -17,39 +19,39 @@ window.addEventListener('DOMContentLoaded', function() {
         tabs.forEach(item => {
             item.classList.remove('tabheader__item_active');
         });
-	}
+    }
 
-	function showTabContent(i = 0) {
+    function showTabContent(i = 0) {
         tabsContent[i].classList.add('show');
         tabsContent[i].classList.remove('hide');
         tabs[i].classList.add('tabheader__item_active');
     }
-    
+
     hideTabContent();
     showTabContent();
 
-	tabsParent.addEventListener('click', function(event) {
-		const target = event.target;
-		if(target && target.classList.contains('tabheader__item')) {
+    tabsParent.addEventListener('click', function (event) {
+        const target = event.target;
+        if (target && target.classList.contains('tabheader__item')) {
             tabs.forEach((item, i) => {
                 if (target == item) {
                     hideTabContent();
                     showTabContent(i);
                 }
             });
-		}
-	});
+        }
+    });
 
     //Timer
 
-    const deadline = '2021-6-5';
+    const deadline = '2021-6-25';
 
     function timeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()),
-              days = Math.floor((t / (1000 * 60 * 60 * 24))),
-              hours = Math.floor((t / (1000 * 60 * 60) % 24)),
-              minutes = Math.floor((t / (1000 * 60) % 60)),
-              seconds = Math.floor((t / (1000) % 60));
+            days = Math.floor((t / (1000 * 60 * 60 * 24))),
+            hours = Math.floor((t / (1000 * 60 * 60) % 24)),
+            minutes = Math.floor((t / (1000 * 60) % 60)),
+            seconds = Math.floor((t / (1000) % 60));
 
         return {
             'days': days,
@@ -61,7 +63,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
     }
 
-    function addZero (num) {
+    function addZero(num) {
         if (num >= 0 && num < 10) {
             return `0${num}`;
         } else {
@@ -71,12 +73,12 @@ window.addEventListener('DOMContentLoaded', function() {
 
     function setTimer(selector, endtime) {
         const timer = document.querySelector(selector),
-              days = timer.querySelector('#days'),
-              hours = timer.querySelector('#hours'),
-              minutes = timer.querySelector('#minutes'),
-              seconds = timer.querySelector('#seconds'),
-              interval = setInterval(updateTimer, 1000);
-        
+            days = timer.querySelector('#days'),
+            hours = timer.querySelector('#hours'),
+            minutes = timer.querySelector('#minutes'),
+            seconds = timer.querySelector('#seconds'),
+            interval = setInterval(updateTimer, 1000);
+
         updateTimer();
 
         function updateTimer() {
@@ -88,30 +90,37 @@ window.addEventListener('DOMContentLoaded', function() {
             seconds.innerHTML = addZero(timeRem.seconds);
 
             if (timeRem.remaining <= 0) {
+                days.innerHTML = 0;
+                hours.innerHTML = 0;
+                minutes.innerHTML = 0;
+                seconds.innerHTML = 0;
                 clearInterval(interval);
-            } 
+            }
         }
     }
 
     setTimer('.timer', deadline);
 
+    //modal window
+
     const btnsModal = document.querySelectorAll('[data-modal]'),
         modalWindow = document.querySelector('.modal'),
         modalClose = document.querySelector('[data-close]');
-        
-    
+
+
 
     const openModal = () => {
         modalWindow.style.display = 'block';
         document.body.style.overflow = 'hidden';
         clearTimeout(modalTimer);
+        window.removeEventListener('scroll', showModalScroll);
     };
 
     for (let button of btnsModal) {
         button.addEventListener('click', openModal);
-               
+
     }
-        
+
 
     const closeModal = () => {
         modalWindow.style.display = 'none';
@@ -132,8 +141,8 @@ window.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    let modalTimer = setTimeout(openModal, 500000);
-    
+    let modalTimer = setTimeout(openModal, 50000);
+
 
     const contactFromModal = {
         name: [],
@@ -144,56 +153,68 @@ window.addEventListener('DOMContentLoaded', function() {
         const addForm = document.querySelector('form.modal__form'),
             inputName = addForm.querySelector('[name="name"]'),
             inputPhone = addForm.querySelector('[name="phone"]');
-        
+
         addForm.addEventListener('submit', (event) => {
             event.preventDefault();
 
             let nameCont = inputName.value,
                 phoneCont = inputPhone.value;
-            
+
             if (nameCont && phoneCont) {
                 contactFromModal.name.push(nameCont);
                 contactFromModal.phone.push(phoneCont);
                 closeModal();
             }
 
-        alert(`${contactFromModal.name[0]}, мы с Вами свяжемся.`);
+            alert(`${contactFromModal.name[0]}, мы с Вами свяжемся.`);
 
         });
-        
+
     };
 
     addCallRequest();
 
+    function showModalScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= 
+            document.documentElement.scrollHeight) {
+                openModal();                               
+        }
+    }
     
+    window.addEventListener('scroll', showModalScroll);
+    
+
+    
+
+
 
     //calculator
 
     const genderChoice = document.querySelector('#gender'),
-          gender = genderChoice.querySelectorAll('.calculating__choose-item'),
-          activityChoice = document.querySelector('.calculating__choose_big'),
-          activity = activityChoice.querySelectorAll('.calculating__choose-item'),
-          calcResult = document.querySelector('.calculating__result span'),
-          calculateInfo = {
-              gender: 0,
-              height: 0,
-              heightRatio: 0,
-              weight: 0,
-              weightRatio: 0,
-              age: 0,
-              ageRatio: 0,
-              activityClass: 0
-          };
-    
-   
+        gender = genderChoice.querySelectorAll('.calculating__choose-item'),
+        activityChoice = document.querySelector('.calculating__choose_big'),
+        activity = activityChoice.querySelectorAll('.calculating__choose-item'),
+        calcResult = document.querySelector('.calculating__result span'),
+        calculateInfo = {
+            gender: 0,
+            height: 0,
+            heightRatio: 0,
+            weight: 0,
+            weightRatio: 0,
+            age: 0,
+            ageRatio: 0,
+            activityClass: 0
+        };
+
+
     function deactivate(type) {
         type.forEach((item) => {
-            item.classList.remove('calculating__choose-item_active');            
+            item.classList.remove('calculating__choose-item_active');
         });
     }
 
     function activate(type, i = 0) {
-        type[i].classList.add('calculating__choose-item_active');        
+        type[i].classList.add('calculating__choose-item_active');
     }
 
     deactivate(gender);
@@ -202,53 +223,53 @@ window.addEventListener('DOMContentLoaded', function() {
     // activate(activity);
 
     gender.forEach((item, i) => {
-        item.addEventListener('click', (event)  => {
+        item.addEventListener('click', (event) => {
             const target = event.target;
             if (event && target.classList.contains('calculating__choose-item')) {
                 deactivate(gender);
                 activate(gender, i);
-                
-                switch(target.textContent) {
-                    case 'Женщина': 
+
+                switch (target.textContent) {
+                    case 'Женщина':
                         calculateInfo.gender = 655.1;
                         calculateInfo.heightRatio = 1.85;
                         calculateInfo.weightRatio = 9.563;
                         calculateInfo.ageRatio = 4.676;
                         break;
-                        
-                    case 'Мужчина': 
+
+                    case 'Мужчина':
                         calculateInfo.gender = 66.5;
                         calculateInfo.heightRatio = 5.003;
                         calculateInfo.weightRatio = 13.75;
                         calculateInfo.ageRatio = 6.775;
-                        break;                    
+                        break;
                 }
                 calcCalories();
-                calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;            
+                calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;
             }
         });
     });
 
     activity.forEach((item, i) => {
-        item.addEventListener('click', (event)  => {
+        item.addEventListener('click', (event) => {
             const target = event.target;
             if (event && target.classList.contains('calculating__choose-item')) {
                 deactivate(activity);
                 activate(activity, i);
 
-                switch(target.textContent) {
-                    case 'Низкая активность': 
+                switch (target.textContent) {
+                    case 'Низкая активность':
                         calculateInfo.activityClass = 1.2;
                         break;
-                    case 'Невысокая активность': 
+                    case 'Невысокая активность':
                         calculateInfo.activityClass = 1.375;
                         break;
-                    case 'Умеренная активность': 
+                    case 'Умеренная активность':
                         calculateInfo.activityClass = 1.55;
                         break;
-                    case 'Высокая активность': 
+                    case 'Высокая активность':
                         calculateInfo.activityClass = 1.7;
-                        break; 
+                        break;
                 }
                 calcCalories();
                 calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;
@@ -260,14 +281,14 @@ window.addEventListener('DOMContentLoaded', function() {
         paramHeight = paramsBlock.querySelector('#height'),
         paramWeight = paramsBlock.querySelector('#weight'),
         paramAge = paramsBlock.querySelector('#age');
-    
+
     paramWeight.addEventListener('change', (event) => {
         const target = event.target;
         calculateInfo.weight = target.value;
         calcCalories();
         calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;
-    });  
-    
+    });
+
     paramHeight.addEventListener('change', (event) => {
         const target = event.target;
         calculateInfo.height = target.value;
@@ -294,7 +315,7 @@ window.addEventListener('DOMContentLoaded', function() {
             g = calculateInfo.weightRatio,
             h = calculateInfo.ageRatio;
 
-            caloriesTotal = Math.floor((e + (g * a) + (f * b) - (h * c))*d);
+        caloriesTotal = Math.floor((e + (g * a) + (f * b) - (h * c)) * d);
     }
     //offer slider 104
 
@@ -313,40 +334,40 @@ window.addEventListener('DOMContentLoaded', function() {
     }
     hideOfferSlide();
 
-    function showOfferSlide(i = 2) {            
-            offerSlide[i].classList.add('show');
-            offerSlide[i].classList.remove('hide');           
+    function showOfferSlide(i = 2) {
+        offerSlide[i].classList.add('show');
+        offerSlide[i].classList.remove('hide');
     }
     showOfferSlide();
 
     prevSlideCount.addEventListener('click', () => {
-        let index = +currentSlideCount.textContent;            
-        if (index >= 2) {                
-                hideOfferSlide();
-                showOfferSlide(+currentSlideCount.textContent-2);
-                currentSlideCount.innerHTML = `<span id="current">0${index-1}</span>`;                
-        } else {                
-                hideOfferSlide();
-                showOfferSlide(+totalSlideCount.textContent-1);
-                currentSlideCount.innerHTML = 
-                    `<span id="current">0${+totalSlideCount.textContent}</span>`;              
+        let index = +currentSlideCount.textContent;
+        if (index >= 2) {
+            hideOfferSlide();
+            showOfferSlide(+currentSlideCount.textContent - 2);
+            currentSlideCount.innerHTML = `<span id="current">0${index-1}</span>`;
+        } else {
+            hideOfferSlide();
+            showOfferSlide(+totalSlideCount.textContent - 1);
+            currentSlideCount.innerHTML =
+                `<span id="current">0${+totalSlideCount.textContent}</span>`;
         }
-        
+
     });
 
     nextSlideCount.addEventListener('click', () => {
-        let index = +currentSlideCount.textContent;            
-        if (index <= +totalSlideCount.textContent-1) {                
-                hideOfferSlide();
-                showOfferSlide(+currentSlideCount.textContent);
-                currentSlideCount.innerHTML = `<span id="current">0${index+1}</span>`;                
-        } else {                
-                hideOfferSlide();
-                showOfferSlide(+totalSlideCount.textContent-4);
-                currentSlideCount.innerHTML = 
-                    `<span id="current">0${+totalSlideCount.textContent-3}</span>`;              
+        let index = +currentSlideCount.textContent;
+        if (index <= +totalSlideCount.textContent - 1) {
+            hideOfferSlide();
+            showOfferSlide(+currentSlideCount.textContent);
+            currentSlideCount.innerHTML = `<span id="current">0${index+1}</span>`;
+        } else {
+            hideOfferSlide();
+            showOfferSlide(+totalSlideCount.textContent - 4);
+            currentSlideCount.innerHTML =
+                `<span id="current">0${+totalSlideCount.textContent-3}</span>`;
         }
-        
+
     });
 
     // call request from page 223
@@ -354,29 +375,102 @@ window.addEventListener('DOMContentLoaded', function() {
 
     const addOrderRequest = () => {
         const callRequest = document.querySelector('.order'),
-        nameFromForm = callRequest.querySelector('[name="name"]'),
-        phoneFromForm = callRequest.querySelector('[name="phone"]'),
-        orderForm = callRequest.querySelector('.order__form');
-        
+            nameFromForm = callRequest.querySelector('[name="name"]'),
+            phoneFromForm = callRequest.querySelector('[name="phone"]'),
+            orderForm = callRequest.querySelector('.order__form');
+
         orderForm.addEventListener('submit', (event) => {
             event.preventDefault();
 
             let nameCont = nameFromForm.value,
                 phoneCont = phoneFromForm.value;
-            
+
             if (nameCont && phoneCont) {
                 contactFromModal.name.push(nameCont);
-                contactFromModal.phone.push(phoneCont);                
+                contactFromModal.phone.push(phoneCont);
+                clearInterval(modalTimer);
             }
 
             alert(`${contactFromModal.name[0]}, мы с Вами свяжемся.`);
-            
+
 
         });
-        
+
     };
 
     addOrderRequest();
 
-});
+    // menu rendering
 
+    class Menu {
+        constructor(imageSrc, alt, subTitle, description, priceTotal, parentSelector, ...classes) {
+            this.imageSrc = imageSrc;
+            this.alt = alt;
+            this.subTitle = subTitle;
+            this.description = description;
+            this.classes = classes;
+            this.priceTotal = priceTotal;
+            this.exchangeRate = 27;
+            this.parent = document.querySelector(parentSelector);
+            this.priceTotal *= this.exchangeRate;
+        }
+
+        render() {
+            const element = document.createElement('div');
+            this.defaultClass = 'menu__item';
+
+            if (this.classes.length === 0) {
+                element.classList.add(this.defaultClass);
+            } else {
+                this.classes.forEach(className => element.classList.add(className));
+                element.classList.add(this.defaultClass);
+            }
+
+            element.innerHTML = `                
+                <img src=${this.imageSrc} alt=${this.alt}>
+                <h3 class="menu__item-subtitle">${this.subTitle}</h3>
+                <div class="menu__item-descr">${this.description}</div>
+                <div class="menu__item-divider"></div>
+                <div class="menu__item-price">
+                    <div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${this.priceTotal}</span> грн/день</div>
+                </div>                
+           `;
+
+           this.parent.append(element);
+       }
+        
+    }
+
+    let veganMenu = new Menu(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фитнес"',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей ' +  
+        'и фруктов. Продукт активных и здоровых людей. ' + 
+        'Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        9,
+        '.menu .container'
+    );
+
+    veganMenu.render();
+
+    new Menu(
+        "img/tabs/elite.jpg",
+        "elite",
+        'Меню “Премиум”',
+        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+        20,
+        '.menu .container'
+    ).render();
+
+    new Menu(
+        "img/tabs/post.jpg",
+        "post",
+        'Меню "Постное"',
+        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+        14,
+        '.menu .container'
+    ).render();
+
+});
