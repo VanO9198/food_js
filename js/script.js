@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
         tabsContent.forEach(item => {
             item.classList.add('hide');
-            item.classList.remove('show');
+            item.classList.remove('show', 'fade');
 
         });
 
@@ -22,7 +22,7 @@ window.addEventListener('DOMContentLoaded', function () {
     }
 
     function showTabContent(i = 0) {
-        tabsContent[i].classList.add('show');
+        tabsContent[i].classList.add('show', 'fade');
         tabsContent[i].classList.remove('hide');
         tabs[i].classList.add('tabheader__item_active');
     }
@@ -104,75 +104,70 @@ window.addEventListener('DOMContentLoaded', function () {
     //modal window
 
     const btnsModal = document.querySelectorAll('[data-modal]'),
-        modalWindow = document.querySelector('.modal'),
-        modalClose = document.querySelector('[data-close]');
-
-
-
-    const openModal = () => {
-        modalWindow.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        clearTimeout(modalTimer);
-        window.removeEventListener('scroll', showModalScroll);
-    };
+        modalWindow = document.querySelector('.modal');
 
     for (let button of btnsModal) {
         button.addEventListener('click', openModal);
+    }
 
+    function closeModal() {
+        modalWindow.classList.add('hide');
+        modalWindow.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    function openModal() {
+        modalWindow.classList.add('show');
+        modalWindow.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimer);
     }
 
 
-    const closeModal = () => {
-        modalWindow.style.display = 'none';
-        document.body.style.overflow = '';
-    };
-
-    modalClose.addEventListener('click', closeModal);
-
     modalWindow.addEventListener('click', (e) => {
-        if (e.target === modalWindow) {
+        if (e.target === modalWindow || e.target.getAttribute('data-close') == '') {
             closeModal();
         }
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.code === "Escape" && modalWindow.style.display === 'block') {
+        if (e.code === "Escape" && modalWindow.classList.contains('show')) {
             closeModal();
         }
     });
 
-    let modalTimer = setTimeout(openModal, 50000);
+    let modalTimer = setTimeout(openModal, 500000);
 
 
-    const contactFromModal = {
-        name: [],
-        phone: []
-    };
+    // const contactFromModal = {
+    //     name: [],
+    //     phone: []
+    // };
 
-    const addCallRequest = () => {
-        const addForm = document.querySelector('form.modal__form'),
-            inputName = addForm.querySelector('[name="name"]'),
-            inputPhone = addForm.querySelector('[name="phone"]');
+    // const addCallRequest = () => {
+    //     const addForm = document.querySelector('form.modal__form'),
+    //         inputName = addForm.querySelector('[name="name"]'),
+    //         inputPhone = addForm.querySelector('[name="phone"]');
 
-        addForm.addEventListener('submit', (event) => {
-            event.preventDefault();
+    //     addForm.addEventListener('submit', (event) => {
+    //         event.preventDefault();
 
-            let nameCont = inputName.value,
-                phoneCont = inputPhone.value;
+    //         let nameCont = inputName.value,
+    //             phoneCont = inputPhone.value;
 
-            if (nameCont && phoneCont) {
-                contactFromModal.name.push(nameCont);
-                contactFromModal.phone.push(phoneCont);
-                closeModal();
-            }
+    //         if (nameCont && phoneCont) {
+    //             contactFromModal.name.push(nameCont);
+    //             contactFromModal.phone.push(phoneCont);
+    //             closeModal();
+    //         }
 
-            alert(`${contactFromModal.name[0]}, мы с Вами свяжемся.`);
+    //         alert(`${contactFromModal.name[0]}, мы с Вами свяжемся.`);
 
-        });
+    //     });
 
-    };
+    // };
 
-    addCallRequest();
+    // addCallRequest();
 
     function showModalScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= 
@@ -282,21 +277,21 @@ window.addEventListener('DOMContentLoaded', function () {
         paramWeight = paramsBlock.querySelector('#weight'),
         paramAge = paramsBlock.querySelector('#age');
 
-    paramWeight.addEventListener('change', (event) => {
+    paramWeight.addEventListener('input', (event) => {
         const target = event.target;
         calculateInfo.weight = target.value;
         calcCalories();
         calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;
     });
 
-    paramHeight.addEventListener('change', (event) => {
+    paramHeight.addEventListener('input', (event) => {
         const target = event.target;
         calculateInfo.height = target.value;
         calcCalories();
         calcResult.innerHTML = `<span>${caloriesTotal}</span> ккал`;
     });
 
-    paramAge.addEventListener('change', (event) => {
+    paramAge.addEventListener('input', (event) => {
         const target = event.target;
         calculateInfo.age = target.value;
         calcCalories();
@@ -370,35 +365,35 @@ window.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    // call request from page 223
+    // // call request from page 223
 
 
-    const addOrderRequest = () => {
-        const callRequest = document.querySelector('.order'),
-            nameFromForm = callRequest.querySelector('[name="name"]'),
-            phoneFromForm = callRequest.querySelector('[name="phone"]'),
-            orderForm = callRequest.querySelector('.order__form');
+    // const addOrderRequest = () => {
+    //     const callRequest = document.querySelector('.order'),
+    //         nameFromForm = callRequest.querySelector('[name="name"]'),
+    //         phoneFromForm = callRequest.querySelector('[name="phone"]'),
+    //         orderForm = callRequest.querySelector('.order__form');
 
-        orderForm.addEventListener('submit', (event) => {
-            event.preventDefault();
+    //     orderForm.addEventListener('submit', (event) => {
+    //         event.preventDefault();
 
-            let nameCont = nameFromForm.value,
-                phoneCont = phoneFromForm.value;
+    //         let nameCont = nameFromForm.value,
+    //             phoneCont = phoneFromForm.value;
 
-            if (nameCont && phoneCont) {
-                contactFromModal.name.push(nameCont);
-                contactFromModal.phone.push(phoneCont);
-                clearInterval(modalTimer);
-            }
+    //         if (nameCont && phoneCont) {
+    //             contactFromModal.name.push(nameCont);
+    //             contactFromModal.phone.push(phoneCont);
+    //             clearInterval(modalTimer);
+    //         }
 
-            alert(`${contactFromModal.name[0]}, мы с Вами свяжемся.`);
+    //         alert(`${contactFromModal.name[0]}, мы с Вами свяжемся.`);
 
 
-        });
+    //     });
 
-    };
+    // };
 
-    addOrderRequest();
+    // addOrderRequest();
 
     // menu rendering
 
@@ -472,5 +467,88 @@ window.addEventListener('DOMContentLoaded', function () {
         14,
         '.menu .container'
     ).render();
+
+    //Forms
+
+    const forms = document.querySelectorAll('form');
+
+    const statusMessage = {
+        loading: 'img/form/spinner.svg',
+        success: 'Thanx, we will call you',
+        failed: "Something's gone wrong"
+    };
+
+    forms.forEach(item => {
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const statusElement = document.createElement('img');
+            statusElement.src = statusMessage.loading;
+            statusElement.style.cssText = `
+                display: block;
+                margin: 0 auto;
+            `;
+            form.insertAdjacentElement('afterend', statusElement);
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+
+            request.setRequestHeader('Content-type', 'application/json'); 
+            // при использовании связки XMLHttpRequest + FormData, заголовки 
+            // устанавливать не нужно, они устанавливаются автоматически
+
+            const formData = new FormData(form);
+
+            const obj = {};
+            formData.forEach(function(value, key){
+                obj[key] = value;
+            });
+
+            const json = JSON.stringify(obj);
+
+            request.send(json);
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    // console.log(request.response);
+                    thanksMessageModal(statusMessage.success);
+                    form.reset();
+                    statusElement.remove();                       
+                } else {
+                    thanksMessageModal(statusMessage.failed);
+
+                }
+            });
+        });
+    }
+
+    function thanksMessageModal(message) {
+        const thanksArea = document.querySelector('.modal__dialog');
+        thanksArea.classList.add('hide');
+        openModal();
+
+        const thanksElement = document.createElement('div');
+        thanksElement.classList.add('modal__dialog');
+        thanksElement.innerHTML = `
+            <div class="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>            
+            </div>
+        `;
+
+        document.querySelector('.modal').append(thanksElement);
+
+        setTimeout(() => {
+            thanksElement.remove();
+            thanksArea.classList.add('show');
+            thanksArea.classList.remove('hide');
+            closeModal();
+        }, 4000);
+        
+    }
 
 });
