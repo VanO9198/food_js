@@ -1,6 +1,29 @@
 'use strict';
 
+window.onbeforeunload = function () {
+    window.scrollTo(0, 0);
+};
+
 window.addEventListener('DOMContentLoaded', function () {
+
+    $('.sidepanel').hide();
+    $('.header__logo').click(() => {
+        for (let i = 0; i < 20; i++) {
+            $('.header__logo').fadeOut(1000).fadeIn(1000);
+            console.log(i);
+        }
+    });
+    const pepper = $('.pepper img');
+    pepper.click(() => pepper.hide(5000));
+
+    const call = $('.call');
+    call.click(() => {
+        call.html(`
+            <div class="subtitle">Или позвоните Ивану</div>
+            <a href="#" class="link">+38 067 400 82 00</a>
+            <a href="#" class="link">+38 093 609 06 48</a>
+        `);
+    });
 
     // Tabs
 
@@ -121,6 +144,7 @@ window.addEventListener('DOMContentLoaded', function () {
         modalWindow.classList.remove('hide');
         document.body.style.overflow = 'hidden';
         clearInterval(modalTimer);
+        window.removeEventListener('scroll', showModalScroll);
     }
 
 
@@ -281,51 +305,125 @@ window.addEventListener('DOMContentLoaded', function () {
         nextSlideCount = document.querySelector('.offer__slider-next'),
         currentSlideCount = document.querySelector('#current'),
         totalSlideCount = document.querySelector('#total'),
-        slideWrapper = document.querySelector('.offer__slider-wrapper'),
-        offerSlide = slideWrapper.querySelectorAll('.offer__slide');
+        offerSlide = document.querySelectorAll('.offer__slide'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        slidesField = document.querySelector('.offer__slider-inner'),
+        width = window.getComputedStyle(slidesWrapper).width;
+    
+    let slideIndex = 1;
+    let offset = 0;
+    let slidesTotal = offerSlide.length;
 
-    function hideOfferSlide() {
-        offerSlide.forEach((item) => {
-            item.classList.add('hide');
-            item.classList.remove('show');
-        });
+
+    if (offerSlide.length < 10) {
+        totalSlideCount.innerText = `0${slidesTotal}`;
+        currentSlideCount.textContent = `0${slideIndex}`;
+    } else {
+        totalSlideCount.innerText = slidesTotal;
+        currentSlideCount.textContent = slideIndex;
     }
-    hideOfferSlide();
 
-    function showOfferSlide(i = 2) {
-        offerSlide[i].classList.add('show');
-        offerSlide[i].classList.remove('hide');
-    }
-    showOfferSlide();
+    slidesField.style.width = 100 * offerSlide.length + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
 
-    prevSlideCount.addEventListener('click', () => {
-        let index = +currentSlideCount.textContent;
-        if (index >= 2) {
-            hideOfferSlide();
-            showOfferSlide(+currentSlideCount.textContent - 2);
-            currentSlideCount.innerHTML = `<span id="current">0${index-1}</span>`;
-        } else {
-            hideOfferSlide();
-            showOfferSlide(+totalSlideCount.textContent - 1);
-            currentSlideCount.innerHTML =
-                `<span id="current">0${+totalSlideCount.textContent}</span>`;
-        }
+    slidesWrapper.style.overflow = 'hidden';
+
+    offerSlide.forEach(slide => {
+        slide.style.width = width;
     });
 
     nextSlideCount.addEventListener('click', () => {
-        let index = +currentSlideCount.textContent;
-        if (index <= +totalSlideCount.textContent - 1) {
-            hideOfferSlide();
-            showOfferSlide(+currentSlideCount.textContent);
-            currentSlideCount.innerHTML = `<span id="current">0${index+1}</span>`;
+        if (offset == (+width.slice(0, width.length -2) * (offerSlide.length - 1))) { 
+            offset = 0;
         } else {
-            hideOfferSlide();
-            showOfferSlide(+totalSlideCount.textContent - 4);
-            currentSlideCount.innerHTML =
-                `<span id="current">0${+totalSlideCount.textContent-3}</span>`;
+            offset += +width.slice(0, width.length -2);
         }
 
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == offerSlide.length) {
+            slideIndex = 1;
+        } else {
+            slideIndex++;
+        }
+
+        if (offerSlide.length < 10) {
+            currentSlideCount.textContent = `0${slideIndex}`;
+        } else {
+            currentSlideCount.textContent = slideIndex;
+        }
     });
+
+    prevSlideCount.addEventListener('click', () => {
+        if (offset == 0) { 
+            offset = +width.slice(0, width.length -2) * (offerSlide.length - 1)
+        } else {
+            offset -= +width.slice(0, width.length -2);
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == 1) {
+            slideIndex = offerSlide.length;
+        } else {
+            slideIndex--;
+        }
+
+        if (offerSlide.length < 10) {
+            currentSlideCount.textContent = `0${slideIndex}`;
+        } else {
+            currentSlideCount.textContent = slideIndex;
+        }
+    });
+
+    // let slidesTotal = offerSlide.length;
+
+    // if (offerSlide.length < 10) {
+    //     totalSlideCount.innerText = `0${slidesTotal}`;
+    // } else {
+    //     totalSlideCount.innerText = `${slidesTotal}`;
+    // }
+
+    
+
+    // function showOfferSlide(i) {
+    //     if (i > slidesTotal) {
+    //         slideIndex = 1;
+    //     }
+    //     if (i < 1) {
+    //         slideIndex = slidesTotal;
+    //     }
+
+    //     offerSlide.forEach((item) => {
+    //         item.classList.add('hide');
+    //         item.classList.remove('show', 'fade');
+    //     });
+    //     offerSlide[slideIndex - 1].classList.add('show', 'fade');
+    //     offerSlide[slideIndex - 1].classList.remove('hide');
+
+    //     if (slidesTotal < 10) {
+    //         currentSlideCount.textContent = `0${slideIndex}`;
+    //     } else {
+    //         currentSlideCount.textContent = `${slideIndex}`;
+    //     }
+    // }
+
+    // showOfferSlide(slideIndex);
+
+    // function moveSlide(i) {
+    //     showOfferSlide(slideIndex += i);
+    // }
+
+    // nextSlideCount.addEventListener('click', () => {
+    //     moveSlide(1);
+    // });
+
+    // prevSlideCount.addEventListener('click', () => {
+    //     moveSlide(-1);
+    // });
+
+   
 
     // menu rendering
 
